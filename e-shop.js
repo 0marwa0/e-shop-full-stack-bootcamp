@@ -1,7 +1,11 @@
 import { apiCall } from "./apiCalls.js";
 import { createCartIem } from "./displayFunctions.js";
+import { SaveCartInLocalStorage } from "./utlizeFunction.js";
 
-let cart = [];
+let cart = localStorage.getItem("cart")
+  ? JSON.parse(localStorage.getItem("cart"))
+  : [];
+
 let cartIcon = document.getElementById("cart_id");
 let overlay = document.querySelector(".overlay");
 let modal_content = document.querySelector(".modal-content");
@@ -36,24 +40,39 @@ let showCartItems = () => {
     cart_img_container.appendChild(cart_img);
     cartItem.appendChild(cart_img_container);
     cartItem.appendChild(deleteBtn);
+    deleteBtn.addEventListener("click", () => {
+      // fileter the items: removing the one that want to be delete it
+      cart = cart.filter((cartItem) => {
+        return cartItem.id != item.id;
+      });
+      // save in the local storage
+      SaveCartInLocalStorage(cart);
+      // update the html of the showing the cart item
+      showCartItems();
+    });
     modal_content.appendChild(cartItem);
   });
 };
+
 export let addItemToCart = (product) => {
   let isItemInCart = cart.find((item) => {
     return product.id == item.id;
   });
   if (!isItemInCart) {
     cart.push({ ...product, item_quantity: 1 });
+    SaveCartInLocalStorage(cart);
+
     showCartItems();
   } else {
     cart.map((item) => {
       if (item.id == product.id) {
-        return { ...product, item_quantity: item.item_quantity++ };
+        return { ...item, item_quantity: item.item_quantity++ };
       } else {
         return item;
       }
     });
+    showCartItems();
+    SaveCartInLocalStorage(cart);
   }
 
   console.log(cart, "its already in the cart ");
