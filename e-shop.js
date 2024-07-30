@@ -9,6 +9,7 @@ let cart = localStorage.getItem("cart")
 let cartIcon = document.getElementById("cart_id");
 let overlay = document.querySelector(".overlay");
 let modal_content = document.querySelector(".modal-content");
+
 // when click outside the modal content hide the the overlay
 overlay.addEventListener("click", () => {
   overlay.style.display = "none";
